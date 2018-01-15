@@ -1,0 +1,24 @@
+express:
+    port: 8082
+    debug: 5858
+    host: localhost
+
+auth:
+    jwt_secret: 'SecretForDev'
+
+mongo:
+    urlClient: 'mongodb://localhost:27017/blockchain'
+    urlDocker: 'mongodb://mongo:27017/blockchain'
+
+minerAddress: MINER_ADDRESS
+
+walletAPI:
+  address: '192.168.1.206:8081'
+NATS:
+  mainHost: localhost
+  currentHost: localhost
+  managementPort: 8222
+  clientPort: 4222
+
+# none/debug/info
+loglevel: info

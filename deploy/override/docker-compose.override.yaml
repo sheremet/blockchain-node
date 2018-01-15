@@ -1,0 +1,28 @@
+version: '2.1'
+services:
+  nodeapp:
+    build: .
+    volumes:
+      - appdata:/var/www/node
+    ports:
+      - 8080:80
+    restart: always
+    links:
+    - mongo
+    depends_on:
+    - mongo
+  mongo:
+    image: mongo:3.6-jessie
+    volumes:
+      - mongodb:/data/db
+volumes:
+  appdata:
+    name: appdata
+    driver: local-persist
+    driver_opts:
+      mountpoint: /data/docker/data/blockchain_node
+  mongodb:
+    name: mongodb
+    driver: local-persist
+    driver_opts:
+      mountpoint: /data/docker/data/blockchain_node_mongodb

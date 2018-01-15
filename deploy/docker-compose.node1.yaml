@@ -1,0 +1,56 @@
+version: '2.1'
+services:
+  nodeapp1:
+    ports:
+      - 8083:8083
+    expose:
+      - 8083
+    image: rsheremet/blockchain_node:latest
+    command: npm run start:prod
+    volumes:
+      - appdata1:/var/www/node
+    environment:
+      - EXPRESS_PORT=8083
+      - EXPRESS_HOST=192.168.46.10
+      - JWT_SECRET=SuperSecretTokenyHmc7Za5xz7DnJDVdd69PHjgqbdV8LZh
+      - MONGODB_URL=mongodb://nodeapp1-mongo:27017/blockchain
+      - NATS_HOST=nodeapp1-nats
+      - NATS_MAIN_HOST=nats-main
+      - LOG_LEVEL=info
+      - WALLET_API_ADDRESS=http://192.168.1.206:8081
+      - MINER_ADDRESS=51b97a804ab15c135843d23c091bfccf23461afee457472996dfffbf2f3fce99
+    links:
+    - nodeapp1-mongo
+    - nodeapp1-nats
+    depends_on:
+    - nodeapp1-mongo
+    - nodeapp1-nats
+    external_links:
+    - nats-main
+  nodeapp1-mongo:
+    image: mongo:3.6-jessie
+    volumes:
+    - mongodb1:/data/db1
+    ports:
+    - 27117:27017
+  nodeapp1-nats:
+    image: rsheremet/nats:latest
+    environment:
+    - NATS_CLUSTER_ROUTES=nats-route://ruser:T0pS3cr3t@nats-main:6222
+    ports:
+    - 14222:4222
+    - 16222:6222
+    - 18222:8222
+    external_links:
+    - nats-main
+volumes:
+  appdata1:
+    name: appdata1
+    driver: local-persist
+    driver_opts:
+      mountpoint: /data/docker/data/blockchain_node1
+  mongodb1:
+    name: mongodb1
+    driver: local-persist
+    driver_opts:
+      mountpoint: /data/docker/data/blockchain_node_mongodb1
