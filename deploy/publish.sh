@@ -22,12 +22,11 @@ done
 # Init dirs
 
 this_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-tmp_dir=$(cd "${this_dir}/tmp"; pwd)
 
 # Update Docker Registry
 
 docker login -u ${username} -p ${token}
-docker push ${username}/blockchain:latest
+docker push ${username}/blockchain_node:latest
 
 #docker push rsheremet/nats:latest
 docker push ${username}/nats:latest

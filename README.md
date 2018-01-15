@@ -28,7 +28,6 @@ EXPRESS_HOST=192.168.1.206
 EXPRESS_DEBUG=5858
 JWT_SECRET=SuperSecretToken
 MONGODB_URL=mongodb://<dbuser>:<dbpassword>@<dbhost>:<dbport>/blockchain_prod
-MONGODB_URL_DOCKER=mongodb://mongo:27017/blockchain
 # LOG_LEVEL info | warn | debug | infoAndRequest
 LOG_LEVEL=info
 MINER_ADDRESS=c084ccb93461c63f0a33a8eccf8149c2a747b71d9218e42b7cd442b3322f298e
@@ -50,3 +49,54 @@ npm start
 ```bash
 npm run start:dev
 ```
+
+## On DockerHub:
+
+Link: 
+
+https://hub.docker.com/r/rsheremet/blockchain_node/
+
+```bash
+docker pull rsheremet/blockchain_node
+```
+
+## Build Docker image locally:
+
+Go to `deploy` directory, run next command:
+ 
+ ```bash
+sudo chmod 755 *.sh
+```
+
+Run `deploy/init.sh` with parameters:
+
+ ```bash
+Required for publish:
+--token=YOUR_TOKEN|Password
+--username=YOUR_USERNAME
+Optional:
+--build
+--run
+--dev
+--composestop
+--remove-data
+--publish
+ ```
+ 
+Example for Build, publish and run:
+ 
+ ```bash
+./deploy/init.sh --build --publish --token=MY_DOCKERHUB_PASSWORD --run
+```    
+
+Stop all nodes without removing all persisted data:
+
+```bash
+./deploy/init.sh --run --composestop
+```
+
+Stop all nodes with removing all the persisted data related for this deployment
+
+```bash
+./deploy/init.sh --run --composestop --remove-data
+``` 
