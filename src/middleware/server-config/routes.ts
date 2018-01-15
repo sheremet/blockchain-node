@@ -17,28 +17,6 @@ const models: TsoaRoute.Models = {
             "amount": { "dataType": "double", "required": true },
         },
     },
-    "ITransaction": {
-        "properties": {
-            "from": { "dataType": "string", "required": true },
-            "to": { "dataType": "string", "required": true },
-            "amount": { "dataType": "double", "required": true },
-        },
-    },
-    "IBlockData": {
-        "properties": {
-            "proofOfWork": { "dataType": "double", "required": true },
-            "transactions": { "dataType": "array", "array": { "ref": "ITransaction" }, "required": true },
-        },
-    },
-    "IBlock": {
-        "properties": {
-            "index": { "dataType": "double", "required": true },
-            "timestamp": { "dataType": "double", "required": true },
-            "data": { "ref": "IBlockData", "required": true },
-            "previousHash": { "dataType": "string", "required": true },
-            "hash": { "dataType": "string", "required": true },
-        },
-    },
     "IMinedBlockRequest": {
         "properties": {
             "hash": { "dataType": "string", "required": true },

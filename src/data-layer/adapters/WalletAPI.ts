@@ -33,10 +33,16 @@ export class WalletAPI {
     });
   }
 
-  async getPeerList(): Promise<any> {
+  async getPeerList(excludeOwnAddress = false): Promise<any> {
     return this.axiosInst.get('/peers').then(({data, status}) => {
-      this.peers = data.data;
       logger.info('WalletAPI:peers', this.peers);
+      if (excludeOwnAddress) {
+        this.peers = data.data.filter((addr) => {
+          return addr !== this.getOwnAddress();
+        });
+      } else {
+        this.peers = data.data;
+      }
       return Promise.resolve(this.peers);
     }).catch((err) => {
       logger.error('WalletAPI:getPeerList:error', err);
