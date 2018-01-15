@@ -54,6 +54,7 @@ while [ $# -gt 0 ]; do
        --dev
        --composestop
        --remove-data
+       --publish
        "
        exit 1
       ;;
