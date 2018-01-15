@@ -97,8 +97,8 @@ export class BlockchainDataAgent {
    * Peers
    */
 
-  public async getPeers(): Promise<any> {
-    return this.walletApi.getPeerList();
+  public async getPeers(excludeOwn = false): Promise<any> {
+    return this.walletApi.getPeerList(excludeOwn);
   }
 
   async findLongestChain(): Promise<any> {
@@ -311,7 +311,12 @@ export class BlockchainDataAgent {
     const latestBlock = this.longestChain.block.index;
 
     const prepareTransactionObject = (blockHash, blockIndex, {from, to, amount, txId}) => {
-      return {txId, blockHash, blockIndex, from, to, amount, confirmations: latestBlock - blockIndex};
+
+      let confirmations = latestBlock - blockIndex;
+      if (confirmations < 0) {
+        confirmations = 0;
+      }
+      return {txId, blockHash, blockIndex, from, to, amount, confirmations};
     };
 
     const createResultArr = (arrDBReasult, mutableArr) => {
@@ -382,12 +387,13 @@ export class BlockchainDataAgent {
         }).catch((err) => {
           throw {thrown: true, success: false, status: 500, message: `transactions not removed`, stack: err.toString()};
         });
-      }).catch((err) => {
-        throw {thrown: true, success: false, status: 500, message: `can't save block`, stack: err.toString()};
       }).then(({block: savedBlock}) => {
         if (this.natsInst) {
           this.natsInst.publish('newBlock', savedBlock);
         }
+        return this.sendBlockAdded(savedBlock.hash);
+      }).catch((err) => {
+        throw {thrown: true, success: false, status: 500, message: `can't save block`, stack: err.toString()};
       });
 
     } else {
@@ -431,6 +437,19 @@ export class BlockchainDataAgent {
       const {data: {transactions}} = block;
       return this.checkTransactions(transactions);
     }
+  }
+
+  private async sendBlockAdded(hash: string): Promise<any> {
+    const peers = await this.getPeers(true);
+    const promArr = [];
+
+    peers.forEach((peer) => {
+      promArr.push(WalletAPI.axiosInst(peer).post('/blockchain/mined-new-block', {hash}));
+    });
+
+    return executeAllPromises(promArr).then(({results, errors}) => {
+      return Promise.resolve({hash});
+    });
   }
 
   private async minedBlockCheckWithoutSync(): Promise<any> {

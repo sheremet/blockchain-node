@@ -157,7 +157,7 @@ export class BlockchainController extends Controller {
 
   @Get('mine')
   @Tags('Blockchain mine')
-  public async getMine(): Promise<IBlock> {
+  public async getMine(): Promise<any> {
 
     // const {minerAddress, proofOfWork, findNewChains} = Blockchain;
     //
@@ -191,10 +191,10 @@ export class BlockchainController extends Controller {
     //   hash: lastBlockHash
     // });
 
-    const result: IBlock = await this.blockchainDataAgent.saveBlock();
-
+    const result = await this.blockchainDataAgent.saveBlock();
+    logger.info('getMine:result', result);
     if (result) {
-      return Promise.resolve(result);
+      return successResponse(result);
     } else {
       throw {
         thrown: true,
